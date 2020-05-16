@@ -8,6 +8,7 @@ import random
 import math
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
+import torchvision
 from torchvision import transforms, utils
 from PIL import Image
 #==========================dataset load==========================
@@ -252,6 +253,54 @@ class SalObjDataset(Dataset):
 			label = label[:,:,np.newaxis]
 
 		sample = {'imidx':imidx, 'image':image, 'label':label}
+
+		if self.transform:
+			sample = self.transform(sample)
+
+		return sample
+
+# NB: for now, only represents a single video. Indices index into the frames
+class SalObjVideoDataset(Dataset):
+	def __init__(self,video_name,lbl_name,transform=None):
+		# self.root_dir = root_dir
+		# self.image_name_list = glob.glob(image_dir+'*.png')
+		# self.label_name_list = glob.glob(label_dir+'*.png')
+		self.video_name = video_name
+		self.label_name = lbl_name
+		self.transform = transform
+		self.video, self._audio, self._metadata = torchvision.io.read_video(self.video_name)
+
+	def __len__(self):
+		return self.video.shape[0]
+
+	def __getitem__(self,idx):
+
+		# image = Image.open(self.image_name_list[idx])#io.imread(self.image_name_list[idx])
+		# label = Image.open(self.label_name_list[idx])#io.imread(self.label_name_list[idx])
+
+		# vidname = self.video_name_list[idx]
+		imgidx = np.array([idx])
+		image = self.video[idx]
+
+		if(not self.label_name):
+			label_3 = np.zeros(self.video.shape)
+		else:
+			# TODO: handle potentially reading labels along with videos
+			label_3 = io.imread(self.label_name_list[idx])
+
+		label = np.zeros(label_3.shape[0:2])
+		if(3==len(label_3.shape)):
+			label = label_3[:,:,0]
+		elif(2==len(label_3.shape)):
+			label = label_3
+		# TODO: None of this probably works for videos
+		if(3==len(image.shape) and 2==len(label.shape)):
+			label = label[:,:,np.newaxis]
+		elif(2==len(image.shape) and 2==len(label.shape)):
+			image = image[:,:,np.newaxis]
+			label = label[:,:,np.newaxis]
+
+		sample = {'imidx':imgidx, 'image':image, 'label':label}
 
 		if self.transform:
 			sample = self.transform(sample)

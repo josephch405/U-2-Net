@@ -1,0 +1,8 @@
+data
+*.pyc
+
+# We don't need to modify images from upstream
+*.png
+*.jpg
+*.jpeg
+*.mp4

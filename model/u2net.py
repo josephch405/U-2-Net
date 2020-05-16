@@ -80,7 +80,6 @@ class RSU7(nn.Module):#UNet07DRES(nn.Module):
 
         hx6d =  self.rebnconv6d(torch.cat((hx7,hx6),1))
         hx6up = self.upscore2(hx6d)
-        # print(hx6up.shape,hx5.shape)
         hx5d =  self.rebnconv5d(torch.cat((hx6up,hx5),1))
         hx5dup = self.upscore2(hx5d)
 
