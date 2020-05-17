@@ -197,13 +197,16 @@ class ToTensorLab(object):
 			tmpImg = np.zeros((image.shape[0],image.shape[1],3))
 			image = image/np.max(image)
 			if image.shape[2]==1:
+				# rgb
 				tmpImg[:,:,0] = (image[:,:,0]-0.485)/0.229
 				tmpImg[:,:,1] = (image[:,:,0]-0.485)/0.229
 				tmpImg[:,:,2] = (image[:,:,0]-0.485)/0.229
 			else:
+				# white
 				tmpImg[:,:,0] = (image[:,:,0]-0.485)/0.229
 				tmpImg[:,:,1] = (image[:,:,1]-0.456)/0.224
 				tmpImg[:,:,2] = (image[:,:,2]-0.406)/0.225
+			# return {'imidx':torch.from_numpy(imidx), 'image': torch.from_numpy(tmpImg), 'label': torch.from_numpy(tmpLbl)}
 
 		tmpLbl[:,:,0] = label[:,:,0]
 
